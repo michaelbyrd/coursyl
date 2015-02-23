@@ -31,6 +31,6 @@ function displayLastRow(displayType) {
 }
 
 function hideRow(button) {
-  parentDiv = button.parentNode.parentNode.parentNode;
+  var parentDiv = button.parentNode.parentNode.parentNode;
   parentDiv.style.display = "none";
 }
