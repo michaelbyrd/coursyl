@@ -35,7 +35,7 @@
           </div>
           <div class="span1">
             <% if ff.object.persisted? %>
-              <%= link_to 'Delete', nil, class: "btn btn-danger delete-association", onclick: "hideRow(this);" %>
+              <%= link_to 'Delete', "#", class: "btn btn-danger delete-association", onclick: "hideRow(this);" %>
               <%= ff.check_box :_destroy, class: "destroy", hidden: true %>
             <% else %>
               <%= link_to 'Delete', nil, class: "btn btn-danger flush-association" %>

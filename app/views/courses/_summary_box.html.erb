@@ -25,7 +25,7 @@
         <nav class="navbar smooth-nav">
           <div class="navbar-inner">
             <ul class="nav">
-              <li><%= link_to "Description", '#anchor-description' %></li>
+              <li><%= link_to "Description", '#anchor-description', class: "smoothScroll" %></li>
               <li class="divider-vertical"></li>
               <% if current_user && current_user.teaching?(@course) %>
                 <li><%= link_to "Students", '#anchor-students' %></li>
