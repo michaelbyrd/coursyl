@@ -23,9 +23,9 @@ function disableButton() {
   }, false);
 }
 
-function hideLastRow() {
+function displayLastRow(displayType) {
   var container = document.getElementById("row_container");
   var last = container.lastElementChild;
-  last.style.display = 'none';
+  last.style.display = displayType;
 }
 

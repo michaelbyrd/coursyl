@@ -46,7 +46,7 @@
       <% i += 1 %>
     <% end %>
   </div>
-  <%= link_to '<i class="fa fa-plus"></i> Add Grade Threshold'.html_safe, nil, class: "btn btn-success new-association", "data-index" => i %>
+  <%= link_to '<i class="fa fa-plus"></i> Add Grade Threshold'.html_safe, nil, class: "btn btn-success new-association", "data-index" => i, onclick: "displayLastRow('block')" %>
 
 
   <div class="actions">
@@ -56,5 +56,5 @@
 
 <script>
   disableButton();
-  hideLastRow();
+  displayLastRow('none');
 </script>
