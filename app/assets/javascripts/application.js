@@ -14,3 +14,12 @@
 //= require jquery_ujs
 //= require d3
 //= require_tree .
+
+
+function disableButton() {
+  var button = document.getElementById("save_button");
+  button.addEventListener('click', function() {
+    setTimeout(function(){ button.disabled = true; }, 1);
+  }, false);
+}
+

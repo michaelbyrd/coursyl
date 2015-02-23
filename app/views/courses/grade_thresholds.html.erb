@@ -19,7 +19,7 @@
     number grade which earns that letter.  For instance, a 10 point scale starts with (A, 90)
     and ends with (F, 0).  Feel free to add grades like (B+, 87).</p>
   <% i = 0 %>
-  <div class="associations">
+  <div class="associations" id='test'>
     <%= f.fields_for :grade_thresholds do |ff| %>
       <div class="association container">
         <div class="row">
@@ -50,6 +50,10 @@
 
 
   <div class="actions">
-    <%= f.submit class: "btn" %>
+    <%= f.submit class: "btn", id: "save_button" %>
   </div>
 <% end %>
+
+<script>
+  disableButton();
+</script>
