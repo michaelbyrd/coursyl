@@ -1,0 +1,20 @@
+<% if assignment.status(current_user).name != "Future" %>
+  <%= link_to '<i class="fa fa-edit" title="Take Assignment"></i>'.html_safe, assignment_path(assignment) %>
+<% else %>
+  <i class="fa fa-edit muted" title="Take Assignment"></i>
+<% end %>
+
+<% if current_user && current_user.teaching?(assignment.course) %>
+  <% if assignment.status(current_user).name == "Future" %>
+    <i class="fa fa-legal muted"></i>
+    <i class="fa fa-bar-chart-o muted"></i>
+  <% else %>
+    <% if assignment.students_can_submit %>
+      <%= link_to '<i class="fa fa-legal" title="Grade Assignment"></i>'.html_safe, grade_assignment_path(assignment) %>
+    <% else %>
+      <%= link_to '<i class="fa fa-legal" title="Grade Assignment"></i>'.html_safe, grade_matrix_assignment_path(assignment) %>
+    <% end %>
+    <%= link_to '<i class="fa fa-bar-chart-o" title="View Grades"></i>'.html_safe, view_grades_assignment_path(assignment) %>
+  <% end %>
+  <%= link_to 'Edit', edit_assignment_path(assignment), class: "btn btn-mini" %>
+<% end %>

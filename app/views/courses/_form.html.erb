@@ -1,0 +1,124 @@
+<%= form_for(@course) do |f| %>
+  <% if @course.errors.any? %>
+    <div class="alert alert-error">
+      <ul>
+      <% @course.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.label :term_id do %>
+    <span class="field-label">Term</span>
+    <%= f.select :term_id, Term.for_school_id(current_user.school_id).collect {|s| [ s.name, s.id ] }, required: true %>
+  <% end %>
+
+  <%= f.label :course_code do %>
+    <span class="field-label">Course Code</span> <%= f.text_field :course_code, class: 'input-small' %>
+    <span class="help-inline">e.g. "CS310"</span>
+  <% end %>
+
+  <%= f.label :name do %>
+    <span class="field-label">Course Name</span> <%= f.text_field :name, required: true %>
+  <% end %>
+
+  <%= f.label :period do %>
+    <span class="field-label">Meeting Times</span> <%= f.text_field :period, required: true %>
+  <% end %>
+
+  <%= f.label :color do %>
+    <span class="field-label">Color</span> <%= f.text_field :color, required: true, class: 'input-small' %>
+    <span class="help-inline">e.g. "#FF0000" (<a target="blank" href="http://www.w3schools.com/tags/ref_colorpicker.asp">Color Picker</a>)</span>
+  <% end %>
+
+  <%= f.label :description do %>
+    <span class="field-label">Description</span> <%= f.text_area :description, required: true, class: 'input-xxlarge', rows: 10 %>
+  <% end %>
+
+  <%= f.label :public do %>
+    <span class="field-label">Public Listing?</span> <%= f.check_box :public %>
+  <% end %>
+
+  <h3>Course Features</h3>
+  <div>
+    <label class="checkbox"><%= f.check_box :use_daily_questions %> Daily Questions</label>
+    <p class="muted radio-hint">A simple question can be asked of each student to primte their thinking before each lesson.
+      They will also be shown all pre-class readings when answering the question.</p>
+  </div>
+  <div>
+    <label class="checkbox"><%= f.check_box :use_course_feedback %> Daily Feedback</label>
+    <p class="muted radio-hint">You will set up questions to be asked of every student for each meeting time.  They will answer
+      all questions for every class meeting time on a scale of 0 to 10.  You'll see the average results for each question for
+      each meeting time.</p>
+  </div>
+  <div>
+    <label class="checkbox"><%= f.check_box :use_reveal_slides %> Web-based Slides</label>
+    <p class="muted radio-hint">You will be given the ability to write slide presentations in HTML, which will play back using
+      the rich visual interface of reveal.js.  Students will be able to play back your slides through Coursyl.</p>
+  </div>
+  <div>
+    <label class="checkbox"><%= f.check_box :use_meeting_video %> In-Class Videos</label>
+    <p class="muted radio-hint">You will be given the option to enter a URL of a recording for each class period.  This is most
+      useful if you record your lessons with screen capture software and put the videos up on YouTube (or similar).</p>
+  </div>
+  <div>
+    <label class="checkbox"><%= f.check_box :use_time_cards %> Time Cards</label>
+    <p class="muted radio-hint">Each student will be given a code, which can be a barcode scan.  Instructors will be able to put the
+      class in a "check-in/check-out" mode, which will allow students to scan in or out during lab or group time.</p>
+  </div>
+
+  <h3>Grading Method</h3>
+  <div>
+    <label class="radio"><%= f.radio_button :grading_method, "Assignment" %> Assignments (Traditional Grading)</label>
+    <p class="muted radio-hint">Assignments will each make up a percentage of the course grade.  Assignments can have
+      questions, students can submit answers, and each answer can be graded separately.</p>
+  </div>
+  <div>
+    <label class="radio"><%= f.radio_button :grading_method, "Achievement" %> Badges (Achievement Grading)</label>
+    <p class="muted radio-hint">Students are awarded points and badges for every achievement that they complete.  Achievements are
+      assigned a number of points, and students either receive all the points for that achievement or no points.  Students
+      reach a certain grade by building their points up past pre-defined thresholds.</p>
+  </div>
+  <div>
+    <label class="radio muted"><%= f.radio_button :grading_method, "Activity", disabled: true %> Flipped Classroom (Activity Grading)</label>
+    <p class="muted radio-hint">Work on this feature is still in progress.  For now, please use pre- and in-class assignments.</p>
+  </div>
+
+  <h3>Instructors</h3>
+  <% i = 0 %>
+  <div class="associations">
+    <%= f.fields_for :course_instructors do |ff| %>
+      <div class="association container">
+        <div class="row">
+          <div class="span2">
+            <%= ff.label :primary do %>
+              <span class="medium-field-label">Primary?</span> <%= ff.check_box :primary %>
+            <% end %>
+          </div>
+          <div class="span8">
+            <%= ff.select :instructor_id,
+                User.instructors_for_school_id(current_user.school_id).collect {|s| [ s.full_name, s.id ] },
+                {include_blank: true},
+                class: "input-large" %>
+          </div>
+          <div class="span1">
+            <% if ff.object.persisted? %>
+              <%= link_to 'Delete', nil, class: "btn btn-danger delete-association" %>
+              <%= ff.check_box :_destroy, class: "destroy", hidden: true %>
+            <% else %>
+              <%= link_to 'Delete', nil, class: "btn btn-danger flush-association" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <% i += 1 %>
+    <% end %>
+  </div>
+  <%= link_to '<i class="fa fa-plus"></i> Add Instructor'.html_safe, nil, class: "btn btn-mini btn-success new-association", "data-index" => i %>
+
+
+  <div class="actions">
+    <%= f.submit class: "btn" %>
+  </div>
+<% end %>

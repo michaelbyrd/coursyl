@@ -1,0 +1,317 @@
+<% assignment_statuses = @course.assignment_statuses(current_user) -%>
+
+<%= render partial: "summary_box", locals: {course: @course, :header => true} %>
+
+
+
+
+<section id="first-section">
+  <a id="anchor-description" class="anchor-course"></a>
+  <% if current_user && current_user.teaching?(@course) %>
+    <h3 class="float-right float-right-header"><%= link_to 'Edit Course Details', edit_course_path(@course), class: "btn" %></h3>
+  <% end %>
+  <h3><i class="fa fa-lightbulb-o"></i> Course Description</h3>
+  <p class="muted">Meeting Times: <%= @course.period %></p>
+  <%= markdown(@course.description) %>
+</section>
+
+
+
+
+<% if current_user && current_user.teaching?(@course) %>
+  <% last_assignment = @course.last_assignment %>
+  <% next_assignment = @course.next_assignment %>
+  <section>
+    <a id="anchor-students" class="anchor-course"></a>
+    <% if @course.students.blank? %>
+      <h3 class="float-right float-right-header">
+        <a href="#student-modal" class="btn btn-success" data-toggle="modal">
+          <i class="fa fa-plus"></i> Add Student
+        </a>
+      </h3>
+    <% elsif @course.use_time_cards %>
+      <h3 class="float-right float-right-header"><%= link_to 'Student Check-in/Check-out', time_cards_course_path(@course), class: "btn" %></h3>
+    <% end %>
+
+    <%= render partial: 'modal_add_student' %>
+
+    <h3><i class="fa fa-group"></i> Students</h3>
+    <% if @course.students.present? %>
+      <table class="table table-hover table-condensed">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <% if last_assignment %><th>Last Assignment <i class="fa fa-question-circle muted" title="<%= last_assignment.name %>"></i></th><% end %>
+          <% if next_assignment %><th>Next Assignment <i class="fa fa-question-circle muted" title="<%= next_assignment.name %>"></i></th><% end %>
+          <% if @course.use_time_cards %>
+            <th>Hrs this Wk</th>
+            <th>Total Hrs</th>
+          <% end %>
+          <th>Overall Grade</th>
+          <td class="text-right">
+            <a href="#student-modal" class="btn btn-mini btn-success" data-toggle="modal">
+              <i class="fa fa-plus"></i> Add Student
+            </a>
+          </td>
+        </tr>
+        <% @course.students.each do |student| %>
+          <% last_status = last_assignment.status(student) if last_assignment %>
+          <% next_status = next_assignment.status(student) if next_assignment %>
+          <% cs = student.course_student_for(@course)%>
+          <tr>
+            <td><%= student.full_name %></td>
+            <td><%= student.email %></td>
+            <% if last_assignment %><td><span class="label <%= last_status.label_class %>"><%= last_status.name %></span></td><% end %>
+            <% if next_assignment %><td><span class="label <%= next_status.label_class %>"><%= next_status.name %></span></td><% end %>
+            <% if @course.use_time_cards %>
+              <td><%= number_with_precision(cs.time_this_week, precision: 1) %></td>
+              <td><%= number_with_precision(cs.total_time, precision: 1) %></td>
+            <% end %>
+            <td><%= number_with_precision(cs.grade, precision: 1) %></td>
+            <td class="text-right">
+              <i class="fa fa-bar-chart-o muted" title="View Grades"></i>
+              <% if @course.use_time_cards %>
+                <%= link_to '<i class="fa fa-barcode" title="Change Student Code"></i>'.html_safe, change_code_course_student_path(cs) %>
+              <% end %>
+              <%= link_to '<i class="fa fa-random" title="Change Student Email Address"></i>'.html_safe, change_email_course_student_path(cs) %>
+              <%= link_to '<i class="fa fa-key" title="Change Student Password"></i>'.html_safe, change_password_course_student_path(cs) %>
+              <%= link_to '<i class="fa fa-times-circle-o" title="Remove Student from Course"></i>'.html_safe, cs, method: :delete,
+                data: { confirm: "Are you sure that you would like to remove #{student.full_name} from the course?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <p class="lead">There are no students in this course.</p>
+    <% end %>
+  </section>
+<% end %>
+
+
+
+<% if @course.achievement_grading? %>
+  <section>
+    <a id="anchor-achievements" class="anchor-course"></a>
+    <% if current_user && current_user.teaching?(@course) %>
+      <h3 class="float-right float-right-header">
+        <% if @course.achievements.blank? %>
+          <%= link_to '<i class="fa fa-plus"></i> Add Achievement'.html_safe,
+              new_achievement_path(course_id: @course.id),
+              class: "btn btn-success" %>
+        <% else %>
+          <%= link_to 'Award Achievements',
+              award_achievements_path(course_id: @course.id),
+              class: "btn" %>
+        <% end%>
+      </h3>
+    <% end %>
+    <h3><i class="fa fa-certificate"></i> Achievements</h3>
+    <% if @course.achievements.present? %>
+      <table class="table table-condensed">
+        <% if current_user && current_user.teaching?(@course) %>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <td class="text-right">
+              <%= link_to '<i class="fa fa-plus"></i> New Achievement'.html_safe,
+                  new_achievement_path(course_id: @course.id),
+                  class: "btn btn-mini btn-success" %>
+            </td>
+          </tr>
+        <% end %>
+        <% @course.achievements.each do |a| %>
+          <% disabled = (current_user && current_user.enrolled?(@course) && !current_user.awarded?(a))%>
+          <tr>
+            <td><%= badge(a, muted: disabled)%></td>
+            <td><div class="<%= disabled ? 'muted' : 'bold' %>"><%= a.points %> pts</div></td>
+            <td><%= a.category %></td>
+            <td><strong><%= a.name %></strong><br/><span class="muted"><%= a.description %></span></td>
+
+            <% if current_user && current_user.teaching?(@course) %>
+              <td class="text-right">
+                <%= link_to 'Edit', edit_achievement_path(a), class: "btn btn-mini" %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <p class="lead">There are no achievements for this course.</p>
+    <% end %>
+  </section>
+
+
+
+<% else %>
+  <section>
+    <a id="anchor-assignments" class="anchor-course"></a>
+    <% if current_user && current_user.teaching?(@course) &&
+        @course.assignments.blank? && @course.assignment_grading? %>
+      <h3 class="float-right float-right-header">
+        <%= link_to '<i class="fa fa-plus"></i> New Assignment'.html_safe,
+            new_assignment_path(course_id: @course.id),
+            class: "btn btn-success" %>
+      </h3>
+    <% end %>
+    <h3><i class="fa fa-pencil"></i> Assignments</h3>
+    <% if @course.assignments.present? %>
+      <div class="progress progress-striped">
+        <% assignment_statuses.each do |status| %>
+        <div class="bar <%= status.bar_class %>"
+          style="width: <%= percentage(status.percent) %>;"></div>
+        <% end %>
+      </div>
+      <ul class="inline text-center">
+        <% assignment_statuses.each do |status| %>
+        <li class="<%= status.text_class %>">
+          <span class="label <%= status.label_class %>">
+            <%= status.name %>
+          </span>
+          <%= percentage(status.percent) %>
+        </li>
+        <% end %>
+      </ul>
+      <table class="table table-hover table-condensed">
+        <tr>
+          <th>Due</th>
+          <th>Time</th>
+          <th>Name</th>
+          <th>Status</th>
+          <% if current_user && current_user.enrolled?(@course) %>
+            <th>My Grade</th>
+          <% end %>
+          <th>% of Course</th>
+          <td class="text-right">
+            <% if current_user && current_user.teaching?(@course) && @course.assignment_grading? %>
+              <%= link_to '<i class="fa fa-plus"></i> New Assignment'.html_safe,
+                  new_assignment_path(course_id: @course.id),
+                  class: "btn btn-mini btn-success" %>
+            <% end %>
+          </td>
+        </tr>
+        <% @course.assignments.each do |a| %>
+          <tr>
+            <td><%= date_abbreviation(a.due_at) %></td>
+            <td><%= time_abbreviation(a.due_at) %></td>
+            <td><%= a.name %></td>
+            <td><span class="label <%= a.status(current_user).label_class %>">
+              <%= a.status(current_user).name %>
+            </span></td>
+            <% if current_user && current_user.enrolled?(@course) %>
+              <td><%= int_if_possible(current_user.grade_on_assignment(a)) %></td>
+            <% end %>
+            <td><%= percentage(a.percent_of_grade) %></td>
+            <td class="text-right">
+              <%= render partial: "/assignments/row_buttons", locals: {assignment: a} %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <p class="lead">
+        There are no assignments for this course.
+      </p>
+    <% end %>
+  </section>
+<% end %>
+
+
+<section>
+  <a id="anchor-lessons" class="anchor-course"></a>
+  <% if current_user && current_user.teaching?(@course) %>
+    <h3 class="float-right float-right-header">
+      <% if @course.use_course_feedback %>
+        <%= link_to 'Set Feedback Questions', set_feedback_questions_course_path(@course), class: "btn" %>
+      <% end %>
+      <%= link_to 'Schedule Lessons', schedule_lessons_path(course_id: @course.id), class: "btn" %>
+    </h3>
+  <% end %>
+  <h3><i class="fa fa-clock-o"></i> Meeting Times and Lessons</h3>
+
+  <% if @course.meeting_lessons.present? %>
+    <div id="lesson-tree-anchor"></div>
+    <div id="lesson-tree-wrapper">
+      <div id="lesson-tree" class="well"></div>
+    </div>
+    <script>
+      var tree = new TreeGenerator(<%= @course.lesson_tree.to_json.html_safe %>);
+      tree.buildTree("#lesson-tree");
+      TreeHandler.colorNodesToPresent();
+    </script>
+  <% end %>
+
+  <% if @course.meetings.present? %>
+    <table class="table table-hover table-condensed">
+      <tr>
+        <th>Day</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Lessons</th>
+        <% if @course.use_course_feedback && current_user && current_user.teaching?(@course) %>
+          <% @course.feedback_questions.each do |fq| %>
+            <th>F<%= fq.order_number %> <i class="fa fa-question-circle muted" title="<%= fq.question %>"></i></th>
+          <% end %>
+        <% end %>
+        <th></th>
+      </tr>
+      <% @course.meetings.each do |m| %>
+        <tr heldat="<%= m.held_at_integer %>" class="node">
+          <td><strong><%= weekday_abbreviation(m.held_at) %></strong></td>
+          <td><%= date_abbreviation(m.held_at) %></td>
+          <td><%= time_abbreviation(m.held_at) %></td>
+          <td><%= m.lesson_names %></td>
+          <% if @course.use_course_feedback && current_user && current_user.teaching?(@course) %>
+            <% @course.feedback_questions.each do |fq| %>
+              <td><%= number_with_precision(m.average_feedback(fq), precision: 1) %></td>
+            <% end %>
+          <% end %>
+          <td class="text-right">
+            <%= render partial: "/meetings/row_buttons", locals: {meeting: m} %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+    <div id="lesson-bottom-anchor"></div>
+  <% else %>
+    <p class="lead">No lessons have been scheduled for this course.</p>
+  <% end %>
+</section>
+
+
+
+
+<section>
+  <a id="anchor-policies" class="anchor-course"></a>
+  <% if current_user && current_user.teaching?(@course) %>
+    <h3 class="float-right float-right-header">
+      <%= link_to 'Edit Grading Scale', grade_thresholds_course_path(@course), class: "btn" %>
+      <%= link_to 'Edit Course Policies', policies_course_path(@course), class: "btn" %>
+    </h3>
+  <% end %>
+  <h3><i class="fa fa-comments-o"></i> Course Policies</h3>
+  <% if @course.policies.present? || @course.grade_thresholds.present? %>
+    <dl class="dl-horizontal">
+      <% unless @course.grade_thresholds.blank? %>
+        <dt>Grading Scale</dt>
+        <dd>The following are the possible letter grades in the course:
+          <ul>
+            <% @course.grade_thresholds.each do |t| %>
+              <li><%= t.letter %>: <%= int_if_possible(t.grade) %> and above</li>
+            <% end %>
+          </ul>
+        </dd>
+      <% end %>
+
+      <% unless @course.grade_thresholds.blank? %>
+        <% @course.policies.each do |p| %>
+          <dt><%= p.name %></dt>
+          <dd><%= markdown(p.description) %></dd>
+        <% end %>
+      <% end %>
+    </dl>
+  <% else %>
+    <p class="lead">There are no policies for this course.</p>
+  <% end %>
+</section>

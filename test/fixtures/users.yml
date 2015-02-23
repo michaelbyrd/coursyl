@@ -1,0 +1,15 @@
+adam:
+  title: "Mr."
+  first_name: "Adam"
+  last_name: "Adams"
+
+bill:
+  title: "Mrs."
+  first_name: "Barb"
+  middle_name: "Bob"
+  last_name: "Barker"
+
+carl:
+  title: "Dr."
+  first_name: "Carl"
+  last_name: "Carlson"

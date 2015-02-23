@@ -1,0 +1,137 @@
+.copy-course {
+  height: 40px;
+  select {
+    width: 100%;
+  }
+}
+
+.copy-course-button {
+  margin-bottom: 20px;
+}
+
+.course-summary {
+  border-radius: 5px;
+  margin: 0px;
+  padding: 0px;
+  h2, h3 {
+    margin: 0px;
+  }
+  .lead {
+    color: #666666;
+    margin-bottom: 5px;
+  }
+  .progress {
+    margin: 0px;
+    margin-top: 12px;
+  }
+
+}
+
+.course-summary-fixed {
+  margin-top: -20px;
+  height: 150px;
+  z-index: 10;
+  .span9 {
+    padding: 20px 20px 0px 20px;
+  }
+  .span2 {
+    padding-top: 30px;
+  }
+  .navbar {
+    margin-bottom: 0px;
+  }
+}
+
+.course-summary-small {
+  .span9 {
+    padding: 5px;
+    padding-left: 10px;
+  }
+  .span2 {
+    padding: 5px;
+    h3 {
+      margin-bottom: -10px;
+    }
+  }
+}
+
+.anchor-course {
+  display: block;
+  position: relative;
+  top: -190px;
+  visibility: hidden;
+}
+
+#first-section {
+  margin-top: -10px;
+}
+
+#lesson-tree {
+  height: 150px;
+}
+
+#lesson-tree-wrapper {
+  height: 190px;
+}
+
+g.node {
+  font-family: Verdana, Helvetica;
+  font-size: 12px;
+  font-weight: bold;
+}
+circle.node-dot {
+  fill: lightsalmon;
+  stroke: red;
+  stroke-width: 1px;
+}
+circle.node-dot-empty {
+  fill: #EEEEEE;
+  stroke: grey;
+  stroke-width: 1px;
+}
+circle.node-dot-completed {
+  fill: #66C662;
+  stroke: #468847;
+  stroke-width: 1px;
+}
+
+path.link {
+  fill: none;
+  stroke: gray;
+}
+
+div.node-modal {
+  position: absolute;
+  background: #444444;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 20;
+  color: white;
+  opacity: 0.85;
+  blockquote {
+    color: #AAAAAA;
+  }
+}
+
+div.node-pointer {
+  position: absolute;
+  height: 0px;
+  width: 0px;
+  border-top: 12px solid #444444;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  z-index: 21;
+  opacity: 0.85;
+}
+
+.progress-overlay {
+  float: left;
+  text-align: center;
+  width: 100%;
+  margin-top: -20px;
+  color: #666666;
+}
+
+.min-height {
+  min-height: 130px;
+}

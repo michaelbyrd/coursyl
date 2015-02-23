@@ -1,0 +1,11 @@
+<p><%= link_to back_arrow + "Back to #{@course.code_and_name}", @course %></p>
+
+<h2>New Assignment for <%= @course.code_and_name %></h2>
+
+<% if @lesson %>
+  <p class="lead text-success">
+    <%= @lesson.activity_name(params[:in_class].to_bool) %>
+  </p>
+<% end %>
+
+<%= render 'form' %>

@@ -1,0 +1,80 @@
+<%= form_for(@lesson) do |f| %>
+  <% if @lesson.errors.any? %>
+    <div class="alert alert-error">
+      <ul>
+      <% @lesson.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= hidden_field_tag :redirect, params[:redirect] %>
+
+  <%= f.hidden_field :parent_lesson_id %>
+  <%= f.hidden_field :course_id %>
+
+  <%= f.label :name do %>
+    <span class="field-label">Lesson Name</span> <%= f.text_field :name, required: true %>
+  <% end %>
+
+  <%= f.label :description do %>
+    <span class="field-label">Description</span> <%= f.text_area :description, class: 'input-xxlarge' %>
+  <% end %>
+
+  <% if @course.use_daily_questions %>
+    <%= f.label :lead_in_question do %>
+      <span class="field-label">Daily Question</span> <%= f.text_area :lead_in_question, rows: 3, class: 'input-xxlarge' %>
+    <% end %>
+  <% end %>
+
+  <%= f.label :outline do %>
+    <span class="field-label">Lesson Outline</span> <%= f.text_area :outline, rows: 5, class: 'input-xxlarge' %>
+  <% end %>
+
+  <% if @course.use_reveal_slides %>
+    <%= f.label :slide_html do %>
+      <span class="field-label">HTML of Slides</span> <%= f.text_area :slide_html, rows: 5, class: 'input-xxlarge' %>
+    <% end %>
+  <% end %>
+
+  <h3>Readings and Media</h3>
+  <p class="lead muted">Note: If you would like to give students instructions without linking to a website, leave the URL field blank.</a></p>
+  <% i = 0 %>
+  <div class="associations">
+    <%= f.fields_for :readings do |ff| %>
+      <div class="association container">
+        <div class="row">
+          <div class="span2">
+            <%= ff.label :order_number do %>
+              <strong class="medium-field-label">Order</strong> <%= ff.text_field :order_number, class: "input-small" %>
+            <% end %>
+            <% if @course.use_daily_questions %>
+              <%= ff.label :before_lesson do %>
+                <span class="large-field-label">Pre-Class?</span> <%= ff.check_box :before_lesson %>
+              <% end %>
+            <% end %>
+          </div>
+          <div class="span8">
+            <%= ff.text_field :caption, class: "input-xxlarge", placeholder: "Caption/Text" %>
+            <%= ff.text_field :url, class: "input-xxlarge", placeholder: "URL (must start with http or https)" %>
+          </div>
+          <div class="span1">
+            <% if ff.object.persisted? %>
+              <%= link_to 'Delete', nil, class: "btn btn-danger delete-association" %>
+              <%= ff.check_box :_destroy, class: "destroy", hidden: true %>
+            <% else %>
+              <%= link_to 'Delete', nil, class: "btn btn-danger flush-association" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <% i += 1 %>
+    <% end %>
+  </div>
+  <%= link_to '<i class="fa fa-plus"></i> Add Reading'.html_safe, nil, class: "btn btn-mini btn-success new-association", "data-index" => i %>
+
+  <div class="actions">
+    <%= f.submit class: "btn" %>
+  </div>
+<% end %>

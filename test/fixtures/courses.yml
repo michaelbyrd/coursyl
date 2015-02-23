@@ -1,0 +1,9 @@
+intro:
+  name: Intro Course
+  description: The first class ever.
+  course_code: INT001
+
+intermediate:
+  name: Intermediate Course
+  description: The middle class ever.
+  course_code: INT500
