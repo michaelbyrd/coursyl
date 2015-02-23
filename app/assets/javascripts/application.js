@@ -29,3 +29,7 @@ function displayLastRow(displayType) {
   last.style.display = displayType;
 }
 
+function hideRow(button) {
+  parentDiv = button.parentNode.parentNode.parentNode;
+  parentDiv.style.display = "none";
+}
