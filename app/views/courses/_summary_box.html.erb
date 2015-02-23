@@ -28,18 +28,18 @@
               <li><%= link_to "Description", '#anchor-description', class: "smoothScroll" %></li>
               <li class="divider-vertical"></li>
               <% if current_user && current_user.teaching?(@course) %>
-                <li><%= link_to "Students", '#anchor-students' %></li>
+                <li><%= link_to "Students", '#anchor-students', class: "smoothScroll" %></li>
                 <li class="divider-vertical"></li>
               <% end %>
               <% if @course.achievement_grading? %>
-                <li><%= link_to "Achievements", '#anchor-achievements' %></li>
+                <li><%= link_to "Achievements", '#anchor-achievements', class: "smoothScroll" %></li>
               <% else %>
-                <li><%= link_to "Assignments", '#anchor-assignments' %></li>
+                <li><%= link_to "Assignments", '#anchor-assignments', class: "smoothScroll" %></li>
               <% end %>
               <li class="divider-vertical"></li>
-              <li><%= link_to "Lessons", '#anchor-lessons' %></li>
+              <li><%= link_to "Lessons", '#anchor-lessons', class: "smoothScroll" %></li>
               <li class="divider-vertical"></li>
-              <li><%= link_to "Policies", '#anchor-policies' %></li>
+              <li><%= link_to "Policies", '#anchor-policies', class: "smoothScroll" %></li>
             </ul>
           </div>
         </nav>
